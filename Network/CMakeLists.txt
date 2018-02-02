@@ -10,13 +10,9 @@ set(SRC
 
 	UDPSocket.cpp
 	TCPSocket.cpp
-
-
-
 	
 	main.cpp
 )
 
-set(EXECUTABLE_NAME "Network")
-add_executable(${EXECUTABLE_NAME} ${SRC})
-target_link_libraries(${EXECUTABLE_NAME} Ws2_32)
+add_library(${PROJECT_NAME} ${SRC})
+target_link_libraries(${PROJECT_NAME} Ws2_32)

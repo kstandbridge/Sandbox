@@ -8,9 +8,9 @@ bool SocketUtil::StaticInit()
 #if _WIN32
 	WSADATA wsaData;
 	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	if ( iResult != NO_ERROR )
+	if(iResult != NO_ERROR)
 	{
-		ReportError ("Starting Up");
+		ReportError("Starting Up");
 		return false;
 	}
 #endif
@@ -25,23 +25,24 @@ void SocketUtil::CleanUp()
 }
 
 
-void SocketUtil::ReportError( const char* inOperationDesc )
+void SocketUtil::ReportError(const char* inOperationDesc)
 {
 #if _WIN32
 	LPVOID lpMsgBuf;
 	DWORD errorNum = GetLastError();
-	
+
 	FormatMessage(
-				  FORMAT_MESSAGE_ALLOCATE_BUFFER |
-				  FORMAT_MESSAGE_FROM_SYSTEM |
-				  FORMAT_MESSAGE_IGNORE_INSERTS,
-				  NULL,
-				  errorNum,
-				  MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-				  (LPTSTR) &lpMsgBuf,
-				  0, NULL );
-	
-	
+	              FORMAT_MESSAGE_ALLOCATE_BUFFER |
+	              FORMAT_MESSAGE_FROM_SYSTEM |
+	              FORMAT_MESSAGE_IGNORE_INSERTS,
+	              nullptr,
+	              errorNum,
+	              MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+	              (LPTSTR)&lpMsgBuf,
+	              0,
+	              nullptr);
+
+
 	LOG( "Error %s: %d- %s", inOperationDesc, errorNum, lpMsgBuf );
 #else
 	LOG( "Error: %hs", inOperationDesc );
@@ -55,37 +56,30 @@ int SocketUtil::GetLastError()
 #else
 	return errno;
 #endif
-	
 }
 
-UDPSocketPtr SocketUtil::CreateUDPSocket( SocketAddressFamily inFamily )
+UDPSocketPtr SocketUtil::CreateUDPSocket(SocketAddressFamily inFamily)
 {
-	SOCKET s = socket( inFamily, SOCK_DGRAM, IPPROTO_UDP );
-	
-	if( s != INVALID_SOCKET )
+	SOCKET s = socket(inFamily, SOCK_DGRAM, IPPROTO_UDP);
+
+	if(s != INVALID_SOCKET)
 	{
-		return UDPSocketPtr( new UDPSocket( s ) );
+		return UDPSocketPtr(new UDPSocket(s));
 	}
-	else
-	{
-		ReportError( "SocketUtil::CreateUDPSocket" );
-		return nullptr;
-	}
+	ReportError("SocketUtil::CreateUDPSocket");
+	return nullptr;
 }
 
-TCPSocketPtr SocketUtil::CreateTCPSocket( SocketAddressFamily inFamily )
+TCPSocketPtr SocketUtil::CreateTCPSocket(SocketAddressFamily inFamily)
 {
-	SOCKET s = socket( inFamily, SOCK_STREAM, IPPROTO_TCP );
-	
-	if( s != INVALID_SOCKET )
+	SOCKET s = socket(inFamily, SOCK_STREAM, IPPROTO_TCP);
+
+	if(s != INVALID_SOCKET)
 	{
-		return TCPSocketPtr( new TCPSocket( s ) );
+		return TCPSocketPtr(new TCPSocket(s));
 	}
-	else
-	{
-		ReportError( "SocketUtil::CreateTCPSocket" );
-		return nullptr;
-	}
+	ReportError("SocketUtil::CreateTCPSocket");
+	return nullptr;
 }
 
 fd_set* SocketUtil::FillSetFromVector( fd_set& outSet, const std::vector< TCPSocketPtr >* inSockets, int& ioNaxNfds )
